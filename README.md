@@ -63,7 +63,7 @@ This study uses four benchmark datasets:
 | Dataset | Description                      | Size     |
 |---------|----------------------------------|----------|
 | Dataset 1 | Telco Churn Data                 | 3,333 samples |
-| Dataset 2 | Telco Extended Dataset           | 7,043 samples |
+| Dataset 2 | IBM Dataset                      | 7,043 samples |
 | Dataset 3 | Cell2Cell (hosted externally)    | 51,047 samples |
 | Dataset 4 | Telecom Churn Dataset (11 features) | 3,333 samples |
 
@@ -71,7 +71,7 @@ This study uses four benchmark datasets:
 📥 Download it from:  
 [https://drive.google.com/drive/folders/1bxRZLgY83PvXo2_l0PsQGdWEYBgZfjCD](https://drive.google.com/drive/folders/1bxRZLgY83PvXo2_l0PsQGdWEYBgZfjCD?usp=sharing)
 
-**Place all datasets inside the `datasets/` folder** before running the experiments.
+**Place all datasets inside the `data/` folder** before running the experiments.
 
 ---
 
