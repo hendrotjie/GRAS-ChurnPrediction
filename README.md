@@ -16,13 +16,18 @@ We evaluate GRAS across four benchmark churn datasets and compare its performanc
 
 ```
 ├── src/                # Source code for GRAS
-│   ├── gras.py         # Main GRAS algorithm
-│   ├── gsa.py          # Gravitational Search Algorithm
-│   ├── sa.py           # Simulated Annealing
-│   └── utils.py        # Helper functions
+│   ├── _init_.py         
+│   ├── GSA_implementation.py          
+│   ├── benchmarks.py                 
+│   ├── generate_neighbor.py           
+│   ├── gsa_sa_iterative.py            
+│   ├── main.py                        
+│   ├── solution.py                    
+│   └── utils.py        
 ├── datasets/           # Benchmark datasets (except Dataset 3)
 ├── results/            # Output metrics and logs
 ├── notebooks/          # Jupyter notebooks for testing
+│   └── 02_Simulated_Annealing_Acutal_GSA_EDITED.ipynb
 ├── requirements.txt    # Python dependencies
 └── README.md           # Project documentation
 ```
