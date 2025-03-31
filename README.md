@@ -24,7 +24,7 @@ We evaluate GRAS across four benchmark churn datasets and compare its performanc
 │   ├── main.py                        
 │   ├── solution.py                    
 │   └── utils.py        
-├── datasets/           # Benchmark datasets (except Dataset 3)
+├── data/           # Benchmark datasets (except Dataset 3)
 ├── results/            # Output metrics and logs
 ├── notebooks/          # Jupyter notebooks for testing
 │   └── 02_Simulated_Annealing_Acutal_GSA_EDITED.ipynb
@@ -65,7 +65,7 @@ This study uses four benchmark datasets:
 | Dataset 1 | Telco Churn Data                 | 3,333 samples |
 | Dataset 2 | Telco Extended Dataset           | 7,043 samples |
 | Dataset 3 | Cell2Cell (hosted externally)    | 51,047 samples |
-| Dataset 4 | Telecom Churn Dataset (11 features) | Small-scale |
+| Dataset 4 | Telecom Churn Dataset (11 features) | 3,333 samples |
 
 ⚠️ **Due to GitHub file size restrictions**, Dataset 3 is hosted externally.  
 📥 Download it from:  
