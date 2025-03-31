@@ -6,49 +6,89 @@ This repository contains the source code and experiment setup for the paper:
 
 ## 🧠 Overview
 
-The proposed GRAS method combines the global search capability of the **Gravitational Search Algorithm (GSA)** with the local refinement ability of **Simulated Annealing (SA)** to perform effective feature selection in customer churn prediction.
+The proposed **GRAS** method combines the global search capability of the **Gravitational Search Algorithm (GSA)** with the local refinement strength of **Simulated Annealing (SA)** to perform effective feature selection for customer churn prediction.
 
-We evaluate the GRAS approach across four benchmark churn datasets and compare its performance against traditional, hybrid, and ensemble-based models.
+We evaluate GRAS across four benchmark churn datasets and compare its performance against traditional, hybrid, and ensemble-based methods.
+
+---
 
 ## 📂 Repository Structure
-├── src/ # Source code for GRAS implementation │ ├── gras.py # Main GRAS algorithm │ ├── gsa.py # Gravitational Search Algorithm │ ├── sa.py # Simulated Annealing │ └── utils.py # Helper functions ├── datasets/ # Public benchmark datasets (except Dataset 3, hosted externally) ├── results/ # Evaluation metrics and logs ├── notebooks/ # Jupyter notebooks for testing and visualization ├── requirements.txt # Python dependencies └── README.md # This file
 
+```
+├── src/                # Source code for GRAS
+│   ├── gras.py         # Main GRAS algorithm
+│   ├── gsa.py          # Gravitational Search Algorithm
+│   ├── sa.py           # Simulated Annealing
+│   └── utils.py        # Helper functions
+├── datasets/           # Benchmark datasets (except Dataset 3)
+├── results/            # Output metrics and logs
+├── notebooks/          # Jupyter notebooks for testing
+├── requirements.txt    # Python dependencies
+└── README.md           # Project documentation
+```
+
+---
 
 ## 🧪 Reproducing the Results
-1. Clone this repository:
+
+1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/GRAS-ChurnPrediction.git
+   git clone https://github.com/hendrotjie/GRAS-ChurnPrediction.git
    cd GRAS-ChurnPrediction
-2. Install Dependencies:
+   ```
+
+2. **Install dependencies:**
+   ```bash
    pip install -r requirements.txt
-3. Run the experiment:
-   run the 02_Simulated_Annealing_Actual_GSA_EDITED.ipnyb file
+   ```
 
-📊 Datasets
+3. **Run the experiment:**
+   Open and execute the notebook:
 
-This study uses four benchmark datasets. Due to GitHub file size restrictions, Dataset 3 (Cell2Cell) is hosted externally.
+   ```
+   notebooks/02_Simulated_Annealing_Actual_GSA_EDITED.ipynb
+   ```
 
-    Dataset 1: Telco Churn Data (3333 samples)
-    Dataset 2: Telco Extended Dataset (7043 samples)
-    Dataset 3: Cell2Cell Dataset (51047 samples)
-    📥 Download link: https://drive.google.com/drive/folders/1bxRZLgY83PvXo2_l0PsQGdWEYBgZfjCD?usp=sharing
-    Dataset 4: Telecom Churn Dataset (11 features)
+---
 
-Please place all datasets in the /datasets folder before running the code.  
+## 📊 Datasets
 
-📈 Evaluation Metrics
+This study uses four benchmark datasets:
 
-    Accuracy
-    Precision
-    Recall
-    F1 Score
-    AUC
-    Overall Features Selected (OFS)
+| Dataset | Description                      | Size     |
+|---------|----------------------------------|----------|
+| Dataset 1 | Telco Churn Data                 | 3,333 samples |
+| Dataset 2 | Telco Extended Dataset           | 7,043 samples |
+| Dataset 3 | Cell2Cell (hosted externally)    | 51,047 samples |
+| Dataset 4 | Telecom Churn Dataset (11 features) | Small-scale |
 
-📜 License
-This project is licensed under the MIT License. See the LICENSE file for details.
+⚠️ **Due to GitHub file size restrictions**, Dataset 3 is hosted externally.  
+📥 Download it from:  
+[https://drive.google.com/drive/folders/1bxRZLgY83PvXo2_l0PsQGdWEYBgZfjCD](https://drive.google.com/drive/folders/1bxRZLgY83PvXo2_l0PsQGdWEYBgZfjCD?usp=sharing)
 
-📬 Contact
-For questions or collaboration:
-    📧 Your Name: hendro@widyadharma.ac.id
-    📄 Paper DOI: (Add once available)
+**Place all datasets inside the `datasets/` folder** before running the experiments.
+
+---
+
+## 📈 Evaluation Metrics
+
+- Accuracy
+- Precision
+- Recall
+- F1 Score
+- AUC
+- Overall Features Selected (OFS)
+
+---
+
+## 📜 License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## 📬 Contact
+
+- **Name:** Hendro
+- **Email:** hendro@widyadharma.ac.id  
+- **Paper DOI:** _Coming soon_
