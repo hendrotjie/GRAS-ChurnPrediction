@@ -2,7 +2,7 @@
 
 This repository contains the source code and experiment setup for the paper:
 
-**"An Enhanced Feature Selection Technique for Churn Prediction using Hybrid Gravitational Search Algorithm and Simulated Annealing"**
+**"GRAS: An Enhanced Gravitational Search Algorithm for Feature Selection Technique in Churn Prediction"**
 
 ## 🧠 Overview
 
