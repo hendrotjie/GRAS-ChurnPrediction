@@ -1,8 +1,16 @@
 import os
-os.environ["OMP_NUM_THREADS"] = "4"  # OpenMP threads
-os.environ["MKL_NUM_THREADS"] = "4"  # Intel MKL threads
-os.environ["NUMEXPR_NUM_THREADS"] = "4"  # NumExpr threads
-os.environ["OPENBLAS_NUM_THREADS"] = "4"  # OpenBLAS threads
+import numpy as np  # <-- add this
+
+# os.environ["OMP_NUM_THREADS"] = "4"  # OpenMP threads
+# os.environ["MKL_NUM_THREADS"] = "4"  # Intel MKL threads
+# os.environ["NUMEXPR_NUM_THREADS"] = "4"  # NumExpr threads
+# os.environ["OPENBLAS_NUM_THREADS"] = "4"  # OpenBLAS threads
+
+os.environ["OMP_NUM_THREADS"] = "1"  # OpenMP threads
+os.environ["MKL_NUM_THREADS"] = "1"  # Intel MKL threads
+os.environ["NUMEXPR_NUM_THREADS"] = "1"  # NumExpr threads
+os.environ["OPENBLAS_NUM_THREADS"] = "1"  # OpenBLAS threads
+
 
 
 from sklearn.ensemble import RandomForestClassifier
@@ -16,26 +24,44 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.pipeline import Pipeline
 from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.model_selection import StratifiedKFold, cross_validate
+from joblib import parallel_backend
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import make_scorer
 
 
 class FeatureSelector(BaseEstimator, TransformerMixin):
     """
     Custom transformer for feature selection based on binary solutions.
     """
-    def __init__(self, solution):
-        self.solution = solution
+    # def __init__(self, solution):
+    #     self.solution = solution
+    def __init__(self, solution, threshold=0.2):
+        self.solution = np.asarray(solution, dtype=float)
+        self.threshold = float(threshold)
 
     def fit(self, X, y=None):
         return self
 
-    def transform(self, X):
-        # Select features based on binary solution
-        selected_features = [i for i, bit in enumerate(self.solution) if bit >= 0.5]
-        if not selected_features:  # Ensure at least one feature is selected
-            selected_features = [0]  # Select at least one feature
-        print(f"Selected features: {selected_features}")  # Debug output
-        return X.iloc[:, selected_features]
+    # def transform(self, X):
+    #     thr = self.threshold
+    #     # Select features based on binary solution
+    #     # selected_features = [i for i, bit in enumerate(self.solution) if bit >= thr]
+    #     # if not selected_features:  # Ensure at least one feature is selected
+    #     #     selected_features = [0]  # Select at least one feature
+    #     # # print(f"Selected features: {selected_features}")  # Debug output
+    #     # return X.iloc[:, selected_features]
+    #     selected = [i for i, bit in enumerate(self.solution) if bit >= thr]
+    #     if not selected:
+    #         selected = [int(np.argmax(self.solution))]
+    #     # Handle pandas DF or numpy array
+    #     return X.iloc[:, selected] if hasattr(X, "iloc") else X[:, selected]
 
+    def transform(self, X):
+        idx = np.where(self.solution >= self.threshold)[0]
+        if idx.size == 0:  # ensure at least one feature
+            idx = np.array([int(np.argmax(self.solution))])
+        return X.iloc[:, idx]
 
 def get_classifier(clf_name):
     """
@@ -52,7 +78,7 @@ def get_classifier(clf_name):
             random_state=42,
             max_depth=3,  # Limits depth of the tree
             min_samples_split=30,  # Minimum samples required to split an internal node
-            n_estimators=50
+            n_estimators=50, n_jobs=1
         )
     elif clf_name in ["LogisticRegression", "Logistic Regression"]:
         # Add L2 regularization (default in Logistic Regression)
@@ -75,58 +101,111 @@ def get_classifier(clf_name):
 
 
 
-def train_model(X_train, y_train, clf, solution):
+def train_model(X_train, y_train, clf, solution, threshold = 0.2):
     """
     Train and evaluate a classification model using cross-validation on the training set.
     """
     # Create a pipeline with feature selection and classification
     pipeline = Pipeline([
-        ('feature_selection', FeatureSelector(solution=solution)),  # Feature selection
+        ('feature_selection', FeatureSelector(solution=solution, threshold=threshold)),  # Feature selection
+        ('scaler', StandardScaler()),  # Scale features for KNN
         ('classifier', clf)  # Classifier
     ])
 
     # Use cross-validation on the training data
-    kf = KFold(shuffle=True, n_splits=3, random_state=42)  # 5-fold cross-validation
+    # kf = KFold(shuffle=True, n_splits=3, random_state=42)  # 5-fold cross-validation
 
-    accuracy = cross_val_score(pipeline, X_train, y_train.values.ravel(), cv=kf, scoring='accuracy', n_jobs=4).mean()
-    precision = cross_val_score(pipeline, X_train, y_train.values.ravel(), cv=kf, scoring='precision', n_jobs=4).mean()
-    recall = cross_val_score(pipeline, X_train, y_train.values.ravel(), cv=kf, scoring='recall', n_jobs=4).mean()
-    f1 = cross_val_score(pipeline, X_train, y_train.values.ravel(), cv=kf, scoring='f1', n_jobs=4).mean()
-    auc = cross_val_score(pipeline, X_train, y_train.values.ravel(), cv=kf, scoring='roc_auc', n_jobs=4).mean()
+    # accuracy = cross_val_score(pipeline, X_train, y_train.values.ravel(), cv=kf, scoring='accuracy', n_jobs=4).mean()
+    # precision = cross_val_score(pipeline, X_train, y_train.values.ravel(), cv=kf, scoring='precision', n_jobs=4).mean()
+    # recall = cross_val_score(pipeline, X_train, y_train.values.ravel(), cv=kf, scoring='recall', n_jobs=4).mean()
+    # f1 = cross_val_score(pipeline, X_train, y_train.values.ravel(), cv=kf, scoring='f1', n_jobs=4).mean()
+    # auc = cross_val_score(pipeline, X_train, y_train.values.ravel(), cv=kf, scoring='roc_auc', n_jobs=4).mean()
+
+    cv = StratifiedKFold(n_splits=3, shuffle=True, random_state=42)
+
+    scoring = {
+        "accuracy":  "accuracy",
+        "precision": make_scorer(precision_score, zero_division=0),
+        "recall":    make_scorer(recall_score,    zero_division=0),
+        "f1":        make_scorer(f1_score,        zero_division=0),
+        "roc_auc":   "roc_auc",
+    }
+
+    # Use a single parallel call for all metrics; threading avoids heavy process spawn on Windows
+    with parallel_backend("threading", n_jobs=4):
+        cvres = cross_validate(
+            pipeline,
+            X_train, y_train.values.ravel(),
+            cv=cv,
+            scoring=scoring,
+            n_jobs=4,                # 4 threads total across folds
+            return_train_score=False
+        )
+
+
+    # metrics = {
+    #     'accuracy': round(accuracy, 3),
+    #     'precision': round(precision, 3),
+    #     'recall': round(recall, 3),
+    #     'f1': round(f1, 3),
+    #     'auc': round(auc, 3)
+    # }
 
     metrics = {
-        'accuracy': round(accuracy, 3),
-        'precision': round(precision, 3),
-        'recall': round(recall, 3),
-        'f1': round(f1, 3),
-        'auc': round(auc, 3)
+        'accuracy': round(cvres["test_accuracy"].mean(), 3),
+        'precision': round(cvres["test_precision"].mean(), 3),
+        'recall': round(cvres["test_recall"].mean(), 3),
+        'f1': round(cvres["test_f1"].mean(), 3),
+        'auc': round(cvres["test_roc_auc"].mean(), 3)
     }
     return metrics
 
 
-def fitness_function(solution, X_train, y_train, clf=None, alpha=0.99):
+def fitness_function(solution, X_train, y_train, clf=None, alpha=0.99, thr=0.2):
     """
-    Custom fitness function that evaluates a solution by combining error rate and feature count.
-    `alpha` controls the trade-off between accuracy and subset size (0 < alpha < 1).
-    """
-    # Convert solution to binary to identify selected features
-    num_selected_features = sum([bit >= 0.5 for bit in solution])
-    if num_selected_features == 0:
-        num_selected_features = 1  # Ensure at least one feature is selected
+    # Custom fitness function that evaluates a solution by combining error rate and feature count.
+    # `alpha` controls the trade-off between accuracy and subset size (0 < alpha < 1).
+    # """
+    # # Convert solution to binary to identify selected features
+    # num_selected_features = sum([bit >= 0.5 for bit in solution])
+    # if num_selected_features == 0:
+    #     num_selected_features = 1  # Ensure at least one feature is selected
 
-    # Use get_classifier if clf is a string
+    # # Use get_classifier if clf is a string
+    # if isinstance(clf, str):
+    #     clf = get_classifier(clf)
+
+    # # Evaluate model performance
+    # metrics = train_model(X_train, y_train, clf, solution)
+    # error_rate = 1 - metrics['accuracy']  # Error rate is 1 - accuracy
+
+    # # Feature count and normalization
+    # total_features = X_train.shape[1]
+    # normalized_feature_count = num_selected_features / total_features
+
+    # # Calculate fitness
+    # beta = 1 - alpha
+    # fitness = (alpha * error_rate) + (beta * normalized_feature_count)
+    # return fitness
+    """
+    Fitness = alpha * error_rate + (1 - alpha) * (|S| / d)
+    Lower is better. Uses FeatureSelector(threshold=thr) + StandardScaler + clf.
+    """
     if isinstance(clf, str):
         clf = get_classifier(clf)
 
-    # Evaluate model performance
-    metrics = train_model(X_train, y_train, clf, solution)
-    error_rate = 1 - metrics['accuracy']  # Error rate is 1 - accuracy
+    sol = np.asarray(solution, dtype=float)
+    on = sol >= thr
+    if not np.any(on):
+        sol = sol.copy()
+        sol[int(np.argmax(sol))] = 1.0
 
-    # Feature count and normalization
+    metrics = train_model(X_train, y_train, clf, sol, threshold=thr)
+    error_rate = 1.0 - metrics['accuracy']
+
     total_features = X_train.shape[1]
-    normalized_feature_count = num_selected_features / total_features
+    num_selected = max(1, int((sol >= thr).sum()))
+    normalized_feature_count = num_selected / float(total_features)
 
-    # Calculate fitness
-    beta = 1 - alpha
-    fitness = (alpha * error_rate) + (beta * normalized_feature_count)
-    return fitness
+    beta = 1.0 - alpha
+    return alpha * error_rate + beta * normalized_feature_count
