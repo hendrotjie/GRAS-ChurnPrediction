@@ -50,29 +50,6 @@ data_dir = os.path.join(script_dir, '..', 'data')
 DATA_PATH = '../data/processed/'
 OUTPUT_PATH = '../results/'
 
-# Load data from churn2.csv
-#df = pd.read_csv(r'C:\Users\fakep\Documents\S3 ITS\Machine Learning with Python\Simulated-Annealing-Feature-Selection-main\data\churn2.csv')
-
-#df = pd.read_csv(r'C:\Users\hendr\Documents\S3 ITS\Machine Learning with Python\MachineLearning\Simulated-Annealing-Feature-Selection-main\data\churn2.csv')
-
-#df = pd.read_csv(os.path.join(data_dir, 'churn2.csv'))
-
-
-# Drop the first column as it's not used
-#df = df.iloc[:, 1:]
-
-# Separate features and target
-#X_train = df.drop(columns=['churn'])
-#y_train = df['churn']
-
-# Setup simulated annealing algorithm
-# def simulated_annealing(X_train, y_train, classifier_name="KNN", fitness_function="accuracy", run_index=1, maxiters=50, alpha=0.93, beta=1, T_0=1, update_iters=1, temp_reduction='geometric'):
-# #     columns = ['Iteration', 'Feature Count', 'Feature Set', 'Accuracy','Best Accuracy',
-# #                'Acceptance Probability', 'Random Number', 'Outcome',
-# #                'Precision', 'Recall', 'F1 Score', 'AUC Score',
-# #                'Best Precision', 'Best Recall', 'Best F1 Score', 'Best AUC Score',
-# #                'Run Time (s)']
-
 #menggunakan fitness function baru
 def simulated_annealing(X_train, y_train, initial_solution=None, classifier_name="KNN", fitness_function="custom_fitness", run_index=1, maxiters=50, alpha=0.93, beta_value=0.01, beta=1, update_iters=1, temp_reduction='geometric'):
     columns = ['Iteration', 'Feature Count', 'Feature Set', 
@@ -216,78 +193,7 @@ def simulated_annealing(X_train, y_train, initial_solution=None, classifier_name
         results.loc[i, 'Run Time (s)'] = iteration_time  # Store the run time for this iteration
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-#         if metric['accuracy'] > prev_metric['accuracy']:
-#             print('Local improvement in Accuracy from {:8.4f} to {:8.4f}'
-#                   .format(prev_metric['accuracy'], metric['accuracy']) + ' - New subset accepted')
-#             outcome = 'Improved'
-#             accept_prob, rnd = '-', '-'
-#             prev_metric = metric
-#             curr_subset = new_subset.copy()
-
-#             if metric['accuracy'] > best_metric['accuracy']:
-#                 print('Global improvement in Accuracy from {:8.4f} to {:8.4f}'
-#                       .format(best_metric['accuracy'], metric['accuracy']) + ' - Best subset updated')
-#                 best_metric = metric
-#                 best_subset = new_subset.copy()    
-                
-#         else:
-#             rnd = np.random.uniform()
-#             diff = prev_metric['accuracy'] - metric['accuracy']
-#             accept_prob = np.exp(-beta * diff / T)
-
-#             if rnd < accept_prob:
-#                 print('New subset has worse performance but still accept. Metric change' +
-#                       ':{:8.4f}, Acceptance probability:{:6.4f}, Random number:{:6.4f}'
-#                       .format(diff, accept_prob, rnd))
-#                 outcome = 'Accept'
-#                 prev_metric = metric
-#                 curr_subset = new_subset.copy()
-#             else:
-#                 print('New subset has worse performance, therefore reject. Metric change' +
-#                       ':{:8.4f}, Acceptance probability:{:6.4f}, Random number:{:6.4f}'
-#                       .format(diff, accept_prob, rnd))
-#                 outcome = 'Reject'
-
-#         # End timing the iteration
-#         end_time = time.time()
-#         iteration_time = end_time - start_time
-                
-                
-#         # Update results dataframe
-#         results.loc[i, 'Iteration'] = i+1
-#         results.loc[i, 'Feature Count'] = len(curr_subset)
-#         results.loc[i, 'Feature Set'] = sorted(curr_subset)
-#         results.loc[i, 'Acceptance Probability'] = accept_prob
-#         results.loc[i, 'Random Number'] = rnd
-#         results.loc[i, 'Outcome'] = outcome
-#         results.loc[i, 'Accuracy'] = metric.get('accuracy')
-#         results.loc[i, 'Precision'] = metric.get('precision')
-#         results.loc[i, 'Recall'] = metric.get('recall')
-#         results.loc[i, 'F1 Score'] = metric.get('f1')
-#         results.loc[i, 'AUC Score'] = metric.get('auc_score', np.nan)
-#         results.loc[i, 'Best Accuracy'] = best_metric.get('accuracy')
-#         results.loc[i, 'Best Precision'] = best_metric.get('precision')
-#         results.loc[i, 'Best Recall'] = best_metric.get('recall')
-#         results.loc[i, 'Best F1 Score'] = best_metric.get('f1')
-#         results.loc[i, 'Best AUC Score'] = best_metric.get('auc_score', np.nan)
-#         results.loc[i, 'Run Time (s)'] = iteration_time 
-        
+                     
         if i % update_iters == 0:
             if temp_reduction == 'geometric':
                 T = alpha * T #Geometric cooling with alpha = 0.93
